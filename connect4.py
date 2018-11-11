@@ -4,6 +4,9 @@ import sys
 import math
 import random
 
+import ai
+from ai import *
+
 BLUE = (0,0,255)
 BLACK = (0,0,0)
 RED = (255,0,0)
@@ -142,16 +145,7 @@ def play_game(mode):
 						turn = turn % 2
 
 				if (mode == "random"):
-					col = random.randint(0, COLUMN_COUNT-1)
-
-					if is_valid_location(board, col):
-							row = get_next_open_row(board, col)
-							drop_piece(board, row, col, 2)
-
-							if winning_move(board, 2):
-								label = myfont.render("Player 2 wins!!", 1, YELLOW)
-								screen.blit(label, (40,10))
-								game_over = True
+					play_random()
 								
 				if (mode == "minmax"):
 					pass
