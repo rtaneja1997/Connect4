@@ -9,7 +9,7 @@ Done:
 - Implemented minimax player 
 
 To do: 
-- Test minimax player (currently tested at depth of 4, no pr
+- Test minimax player (currently tested at depth of 4, higher depths cause exponential rise in time computations) 
 - Noticed that the game allows someone to make an 'illegal move', i.e. if a player chooses a full column, the game skips his turn. It might be good if we fix this.
 - alpha beta pruning possibly
 
