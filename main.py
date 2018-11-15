@@ -7,4 +7,4 @@ import math
 import connect4 
 from connect4 import * 
 
-play_game("random")
+play_game("minimax")
