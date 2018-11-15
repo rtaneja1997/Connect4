@@ -3,7 +3,6 @@ import pygame
 import sys
 import math
 import random
-
 import ai
 from ai import *
 
@@ -20,7 +19,8 @@ width = COLUMN_COUNT * SQUARESIZE
 height = (ROW_COUNT+1) * SQUARESIZE
 
 def create_board():
-	board = np.zeros((ROW_COUNT,COLUMN_COUNT))
+	#board = np.zeros([ROW_COUNT, COLUMN_COUNT]) 
+	board=[[0 for i in range(COLUMN_COUNT)] for j in range(ROW_COUNT)]
 	return board
 
 def drop_piece(board, row, col, piece):
@@ -30,12 +30,14 @@ def is_valid_location(board, col):
 	return board[ROW_COUNT-1][col] == 0
 
 def get_next_open_row(board, col):
+
 	for r in range(ROW_COUNT):
 		if board[r][col] == 0:
 			return r
 
 def print_board(board):
-	print(np.flip(board, 0))
+	#print (np.flip(board)) 
+	print ("ignore")
 
 def winning_move(board, piece):
 	# Check horizontal locations for win
@@ -157,8 +159,19 @@ def play_game(mode):
 						screen.blit(label, (40,10))
 
 								
-				if (mode == "minmax"):
-					pass
+				if (mode == "minimax"):
+
+					#make move 
+					col=play_smart(board) 
+					row=get_next_open_row(board, col) 
+					drop_piece(board,row,col,2) 
+
+					#check for win
+					if winning_move(board,2): 
+						game_over=True 
+						label=myfont.render("Player 2 wins!!", 1, YELLOW) 
+						screen.blit(label, (40,10)) 
+
 
 				print_board(board)
 				draw_board(board, screen)
