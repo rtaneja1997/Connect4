@@ -15,3 +15,7 @@ To do:
 
 Notes:
 - minimax was acting kinda weird with numpy so i rewrote a small portion of connect4.py without using numpy. minimax seems fine now but we should still check for bugs by playtesting. 
+
+
+Bugs:
+- If a human wins, it seems the game takes some time to break out of the running loop. Therefore, ai tries to run minimax but gets a terminal state. It should be the case that when anyone wins, the game immediately terminates.
