@@ -161,7 +161,7 @@ def minimax(board, turn, depth):
 			curr_idx+=1 
 		return move_information[best_idx] 
 
-	#minimize score for ai 
+	#minimize score for human 
 	bestScore=10000
 	curr_idx=0 
 	best_idx=0 
