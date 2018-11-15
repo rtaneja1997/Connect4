@@ -102,7 +102,6 @@ def four_consecutive(row, player):
 def get_possible_moves(board): 
 	"""gets available moves for given board """
 
-	poss_moves=[] 
 	print (poss_moves)
 	num_cols=len(board[0]) 
 	for col in range(num_cols): 
