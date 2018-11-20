@@ -1,5 +1,5 @@
 # Connect4
-ai stuff 
+Created an ai for connect 4 utilizing minimax algorithm (with alpha-beta pruning). 
 
 
 
