@@ -13,6 +13,11 @@ YELLOW = (255,255,0)
 SQUARESIZE = 100
 RADIUS = int(SQUARESIZE/2 - 5)
 
+AI_TURN=0
+PLAYER_TURN=1
+AI_PIECE=2
+PLAYER_PIECE=3 
+
 ROW_COUNT = 6
 COLUMN_COUNT = 7
 width = COLUMN_COUNT * SQUARESIZE
@@ -163,6 +168,22 @@ def play_game(mode):
 
 					#make move 
 					col=play_smart(board) 
+					row=get_next_open_row(board, col) 
+					drop_piece(board,row,col,2) 
+
+					#check for win
+					if winning_move(board,2): 
+						game_over=True 
+						label=myfont.render("Player 2 wins!!", 1, YELLOW) 
+						screen.blit(label, (40,10)) 
+				if (mode == "minimax_ab"):
+
+					#make move 
+					col=play_genius(board) 
+					if col is None:
+						label = myfont.render("Player 1 wins!!", 1, RED)
+						screen.blit(label, (40,10))
+						break 
 					row=get_next_open_row(board, col) 
 					drop_piece(board,row,col,2) 
 
