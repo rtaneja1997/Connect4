@@ -332,6 +332,6 @@ def alphabeta(board, turn, depth, a, b):
 			b=min(b,value) 
 			if a>=b:
 				break 
-		return MoveInfo(value, player_move) 
+		return MoveInfo(value, player_move)
 
 
