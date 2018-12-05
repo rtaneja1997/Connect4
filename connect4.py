@@ -151,7 +151,7 @@ def play_game(mode):
 						turn += 1
 						turn = turn % 2
 
-				if (mode == "random"):
+				if (mode == "random") and not game_over:
 					
 					col = play_random(COLUMN_COUNT)
 					if is_valid_location(board, col):
@@ -164,10 +164,11 @@ def play_game(mode):
 						screen.blit(label, (40,10))
 
 								
-				if (mode == "minimax"):
+				if (mode == "minimax") and not game_over:
 
 					#make move 
 					col=play_smart(board) 
+					print ("AI is choosing column " + str(col))
 					row=get_next_open_row(board, col) 
 					drop_piece(board,row,col,2) 
 
@@ -176,7 +177,7 @@ def play_game(mode):
 						game_over=True 
 						label=myfont.render("Player 2 wins!!", 1, YELLOW) 
 						screen.blit(label, (40,10)) 
-				if (mode == "minimax_ab"):
+				if (mode == "minimax_ab") and not game_over:
 
 					#make move 
 					col=play_genius(board) 
