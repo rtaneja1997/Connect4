@@ -1,6 +1,6 @@
 
 #runs the game
-=======
+
 """allows user to choose mode of gameplay. If a minimax variant is chosen, user can set the depth of the AI. """
 
 
@@ -14,10 +14,12 @@ from connect4 import *
 import ai
 def displayText(screen):
     myfont = pygame.font.SysFont("monospace", 30)
-    text = ["Welcome to Connect 4!","Press 1 for player vs. random", "Press 2 for player vs. AI"
+    text = ["Welcome to Connect 4!","Type in the depth of the AI in the box",
+    "Recommended range is 1-5 for minimax and 1-15 for minimax_ab","",
+    "Press 1 for player vs. random", "Press 2 for player vs. AI"
     ,"Press 3 for AI vs. random", "Press 4 for random vs. AI","Press 5 for AI vs. AI",
     "Press 6 for Automated AI vs. Random", "Press 7 for Automated Random vs. AI",
-    "Press 8 for Automated AI vs. AI"]
+    "Press 8 for Automated AI vs. AI", "Press 9 for Player vs. Minimax Alpha Beta"]
     label = []
     for line in text:
         label.append(myfont.render(line, 1, (255,255,255)))
@@ -35,43 +37,92 @@ def main():
     size = (width, height)
     pygame.init()
     screen = pygame.display.set_mode(size)
-    input_box = pygage.Rect(100, 100, 140, 32)
-    displayText(screen)
+    myfont = pygame.font.SysFont("monospace", 30)
+
+    color_inactive = pygame.Color('white')
+    color_active = pygame.Color('red')
+    color = color_inactive
+    active = False
+    text = ''
+    #pygame.draw.rect(screen, (255,255,255), input_box, 2)
+
     pygame.display.update()
 
     waitStart =True
+    ai.DEPTH=int(4)
     while(waitStart):
+        pygame.display.update()
         for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # If the user clicked on the input_box rect.
+                if input_box.collidepoint(event.pos):
+                    # Toggle the active variable.
+                    active = not active
+                else:
+                    active = False
+                # Change the current color of the input box.
+                color = color_active if active else color_inactive
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_1:
-                    waitStart = False
-                    print(play_game("human_vs_random"))
-                elif event.key == pygame.K_2:
-                    print(play_game("human_vs_ai"))
-                    waitStart = False
-                elif event.key == pygame.K_3:
-                    print(play_game("ai_vs_random"))
-                    waitStart = False
-                elif event.key == pygame.K_4:
-                    print(play_game("random_vs_ai"))
-                    waitStart = False
-                elif event.key == pygame.K_5:
-                    print(play_game("ai_vs_ai"))
-                    waitStart = False
-                elif event.key == pygame.K_6:
-                    for i in range(10):
-                        print(play_game("auto_ai_vs_random"))
-                    waitStart = False
-                elif event.key == pygame.K_7:
-                    for i in range(10):
-                        print(play_game("auto_random_vs_ai"))
-                    waitStart = False
-                elif event.key == pygame.K_8:
-                    for i in range(10):
-                        print(play_game("auto_ai_vs_ai"))
-                    waitStart = False
+                if active:
+                    if event.key == pygame.K_RETURN:
+                        try:
+                            ai.DEPTH=int(text)
+                            text = 'Depth has been submitted'
+                            txt_surface = myfont.render(text, True, color)
+                            pygame.display.update()
+                        except:
+                            text = 'Please input an integer'
+                    if event.key == pygame.K_BACKSPACE:
+                        text = text[:-1]
+                        print(text)
+                    else:
+                        text += event.unicode
+                    pygame.display.update()
+                else:
+                    if event.key == pygame.K_1:
+                        waitStart = False
+                        print(play_game("human_vs_random"))
+                    elif event.key == pygame.K_2:
+                        print(play_game("human_vs_ai"))
+                        waitStart = False
+                    elif event.key == pygame.K_3:
+                        print(play_game("ai_vs_random"))
+                        waitStart = False
+                    elif event.key == pygame.K_4:
+                        print(play_game("random_vs_ai"))
+                        waitStart = False
+                    elif event.key == pygame.K_5:
+                        print(play_game("ai_vs_ai"))
+                        waitStart = False
+                    elif event.key == pygame.K_6:
+                        for i in range(10):
+                            print(play_game("auto_ai_vs_random"))
+                        waitStart = False
+                    elif event.key == pygame.K_7:
+                        for i in range(10):
+                            print(play_game("auto_random_vs_ai"))
+                        waitStart = False
+                    elif event.key == pygame.K_8:
+                        for i in range(10):
+                            print(play_game("auto_ai_vs_ai"))
+                        waitStart = False
+                    elif event.key == pygame.K_9:
+                        print(play_game("minimax_ab"))
+                        waitStart = False
             elif event.type == pygame.QUIT:
                 sys.exit()
+            screen.fill((0, 0, 0))
+            displayText(screen)
+            input_box = pygame.Rect(100, 130, 50, 32)
+            txt_surface = myfont.render(text, True, color)
+            # Resize the box if the text is too long.
+            width = max(200, txt_surface.get_width()+10)
+            input_box.w = width
+            # Blit the text.
+            screen.blit(txt_surface, (input_box.x+5, input_box.y+5))
+            # Blit the input_box rect.
+            pygame.draw.rect(screen, color, input_box, 2)
+            pygame.display.update()
 
 if __name__ == "__main__": main()
 
