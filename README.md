@@ -17,7 +17,3 @@ To do:
 - incorporate more randomness when ai chooses moves with same value
 
 
-Notes:
-- minimax was acting kinda weird with numpy so i rewrote a small portion of connect4.py without using numpy. minimax seems fine now but we should still check for bugs by playtesting. 
-
-
