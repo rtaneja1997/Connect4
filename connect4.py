@@ -13,6 +13,11 @@ YELLOW = (255,255,0)
 SQUARESIZE = 100
 RADIUS = int(SQUARESIZE/2 - 5)
 
+AI_TURN=0
+PLAYER_TURN=1
+AI_PIECE=2
+PLAYER_PIECE=3
+
 ROW_COUNT = 6
 COLUMN_COUNT = 7
 width = COLUMN_COUNT * SQUARESIZE
@@ -201,7 +206,7 @@ def play_game(mode):
 					#print(event.pos)
 					# Ask for Player 1 Input
 					if turn == 0:
-						if (mode == "human_vs_random" or mode == "human_vs_ai"):
+						if (mode == "human_vs_random" or mode == "human_vs_ai") or mode == "minimax_ab":
 							posx = event.pos[0]
 							col = int(math.floor(posx/SQUARESIZE))
 
@@ -263,9 +268,9 @@ def play_game(mode):
 								winner = 2
 
 						if (mode == "human_vs_ai" or mode == "ai_vs_ai" or mode == "random_vs_ai"):
-
 							#make move
 							col=play_smart(board)
+							print ("AI is choosing column " + str(col))
 							row=get_next_open_row(board, col)
 							drop_piece(board,row,col,2)
 
@@ -274,8 +279,24 @@ def play_game(mode):
 								to_game_over = True
 								label = myfont.render("Player 2 wins!! Press any key to exit.", 1, YELLOW)
 								screen.blit(label, (40,10))
-
 								winner = 2
+						if (mode == "minimax_ab"):
+
+							#make move
+							col=play_genius(board)
+							if col is None:
+								label = myfont.render("Player 1 wins!! Press any key to exit.", 1, RED)
+								screen.blit(label, (40,10))
+								break
+							row=get_next_open_row(board, col)
+							drop_piece(board,row,col,2)
+
+							if winning_move(board,2):
+								to_game_over = True
+								label = myfont.render("Player 2 wins!! Press any key to exit.", 1, YELLOW)
+								screen.blit(label, (40,10))
+								winner = 2
+
 
 					#print_board(board)
 					draw_board(board, screen)
