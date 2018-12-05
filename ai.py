@@ -9,7 +9,7 @@ import copy
 from connect4 import *
 
 
-DEPTH=7
+DEPTH=None #initialized by player 
 INFINITY=100000000000000
 
 #CLASSES 
@@ -288,9 +288,7 @@ def alphabeta(board, turn, depth, a, b):
 
     #Case 3: tie
 	elif possible_moves==[] or depth==0: 
-		return MoveInfo(0)
-
-	
+		return MoveInfo(board_evaluation(board, possible_moves, turn))
 
 	
 
@@ -332,6 +330,8 @@ def alphabeta(board, turn, depth, a, b):
 			b=min(b,value) 
 			if a>=b:
 				break 
-		return MoveInfo(value, player_move)
+		return MoveInfo(value, player_move) 
+
+
 
 
