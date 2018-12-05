@@ -7,6 +7,7 @@ Created an ai for connect 4 utilizing minimax algorithm (with alpha-beta pruning
 Done:
 - Implemented random player
 - Implemented minimax player 
+- Implemented alpha beta player 
 - Fixed bug where player wins but game crashes
 
 To do: 
