@@ -107,14 +107,6 @@ def play_game(mode):
 		or mode == "auto_random_vs_ab" or mode == "auto_ai_vs_ab" or mode == "auto_ab_vs_ab"):
 		while not game_over:
 			if turn == 0:
-				# if (mode == "human_vs_random" or mode == "human_vs_ai"):
-				# 	posx = event.pos[0]
-				# 	col = int(math.floor(posx/SQUARESIZE))
-				#
-				# 	if is_valid_location(board, col):
-				# 		row = get_next_open_row(board, col)
-				# 		drop_piece(board, row, col, 1)
-
 				if (mode == "auto_random_vs_ai" or mode == "auto_random_vs_ab") :
 					col = play_random(COLUMN_COUNT)
 					if is_valid_location(board, col):
@@ -125,9 +117,12 @@ def play_game(mode):
 					#make move
 					col=play_genius(board, AI1_DEPTH)
 					if col is None:
+						if (get_next_open_row(board, col) != None):
+							winner = 2
+						else:
+							winner = 0
 						label = myfont.render("Player 2 wins!! Press any key to exit.", 1, RED)
 						screen.blit(label, (40,10))
-						winner = 2
 						game_over = True
 						break
 					row=get_next_open_row(board, col)
@@ -136,20 +131,24 @@ def play_game(mode):
 				else:
 					col=play_smart(board,AI1_DEPTH)
 					if col is None:
+						for col in range(COLUMN_COUNT ):
+							if (get_next_open_row(board, col) != None):
+								winner = 2
+							else:
+								winner = 0
 						label = myfont.render("Tie!! Press any key to exit.", 1, RED)
 						screen.blit(label, (40,10))
-						print("AA1")
-						winner = 0
 						break
 					row=get_next_open_row(board, col)
 					drop_piece(board,row,col,1)
 
 				if winning_move(board, 1):
 					game_over = True
-					print('player 1 win')
 					label = myfont.render("Player 1 wins!! Press any key to exit", 1, RED)
 					screen.blit(label, (40,10))
 					winner = 1
+
+
 
 			# # Ask for Player 2 Input
 			else:
@@ -167,6 +166,7 @@ def play_game(mode):
 					if winning_move(board, 2):
 						game_over = True #ai stuff
 						label = myfont.render("Player 2 wins!! Press any key to exit", 1, YELLOW)
+						#time.sleep(1)
 						screen.blit(label, (40,10))
 						winner = 2
 
@@ -175,10 +175,14 @@ def play_game(mode):
 					#make move
 					col=play_smart(board,AI2_DEPTH)
 					if col is None:
+						if (get_next_open_row(board, col) != None):
+							winner = 1
+						else:
+							winner = 0
 						label = myfont.render("Tie!! Press any key to exit.", 1, RED)
 						screen.blit(label, (40,10))
 						break
-						Winner = 0
+
 					row=get_next_open_row(board, col)
 					drop_piece(board,row,col,2)
 
@@ -191,9 +195,12 @@ def play_game(mode):
 				elif (mode == "auto_ab_vs_ab" or mode == "auto_ai_vs_ab" or mode == "auto_random_vs_ab"):
 					col=play_genius(board, AI2_DEPTH)
 					if col is None:
+						if (get_next_open_row(board, col) != None):
+							winner = 1
+						else:
+							winner = 0
 						label = myfont.render("Player 1 wins!! Press any key to exit.", 1, RED)
 						screen.blit(label, (40,10))
-						winner = 1
 						break
 					row=get_next_open_row(board, col)
 					drop_piece(board,row,col,2)
@@ -306,6 +313,10 @@ def play_game(mode):
 							#make move
 							col=play_genius(board, AI2_DEPTH)
 							if col is None:
+								if (get_next_open_row(board, col) != None):
+									winner = 1
+								else:
+									winner = 0
 								label = myfont.render("Player 1 wins!! Press any key to exit.", 1, RED)
 								screen.blit(label, (40,10))
 								break
