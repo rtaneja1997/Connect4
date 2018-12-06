@@ -17,6 +17,8 @@ AI_TURN=0
 PLAYER_TURN=1
 AI_PIECE=2
 PLAYER_PIECE=3
+AI1_DEPTH = None
+AI2_DEPTH = None
 
 ROW_COUNT = 6
 COLUMN_COUNT = 7
@@ -101,7 +103,8 @@ def play_game(mode):
 	pygame.display.update()
 
 	myfont = pygame.font.SysFont("monospace", 50)
-	if( mode == "auto_ai_vs_ai" or mode == "auto_ai_vs_random" or mode == "auto_random_vs_ai"):
+	if( mode == "auto_ai_vs_ai" or mode == "auto_ai_vs_random" or mode == "auto_random_vs_ai"
+		or mode == "auto_random_vs_ab" or mode == "auto_ai_vs_ab" or mode == "auto_ab_vs_ab"):
 		while not game_over:
 			if turn == 0:
 				# if (mode == "human_vs_random" or mode == "human_vs_ai"):
@@ -112,13 +115,32 @@ def play_game(mode):
 				# 		row = get_next_open_row(board, col)
 				# 		drop_piece(board, row, col, 1)
 
-				if (mode == "auto_random_vs_ai"):
+				if (mode == "auto_random_vs_ai" or mode == "auto_random_vs_ab") :
 					col = play_random(COLUMN_COUNT)
 					if is_valid_location(board, col):
 						row = get_next_open_row(board, col)
 						drop_piece(board, row, col, 1)
+				elif (mode == "auto_ab_vs_ab"):
+
+					#make move
+					col=play_genius(board, AI1_DEPTH)
+					if col is None:
+						label = myfont.render("Player 2 wins!! Press any key to exit.", 1, RED)
+						screen.blit(label, (40,10))
+						winner = 2
+						game_over = True
+						break
+					row=get_next_open_row(board, col)
+					drop_piece(board,row,col,1)
+
 				else:
-					col=play_smart(board)
+					col=play_smart(board,AI1_DEPTH)
+					if col is None:
+						label = myfont.render("Tie!! Press any key to exit.", 1, RED)
+						screen.blit(label, (40,10))
+						print("AA1")
+						winner = 0
+						break
 					row=get_next_open_row(board, col)
 					drop_piece(board,row,col,1)
 
@@ -126,28 +148,11 @@ def play_game(mode):
 					game_over = True
 					print('player 1 win')
 					label = myfont.render("Player 1 wins!! Press any key to exit", 1, RED)
-					#time.sleep(1)
 					screen.blit(label, (40,10))
 					winner = 1
 
-
-
 			# # Ask for Player 2 Input
 			else:
-				# if (mode == "human"):
-				# 	posx = event.pos[0]
-				# 	col = int(math.floor(posx/SQUARESIZE))
-				#
-				# 	if is_valid_location(board, col):
-				# 		row = get_next_open_row(board, col)
-				# 		drop_piece(board, row, col, 2)
-				#
-				# 		if winning_move(board, 2):
-				# 			label = myfont.render("Player 2 wins!! Press any key to exit", 1, YELLOW)
-				# 			#time.sleep(1)
-				# 			screen.blit(label, (40,10))
-				# 			winner = 2
-				# 			to_game_over = True
 
 				turn += 1
 				turn = turn % 2
@@ -162,14 +167,18 @@ def play_game(mode):
 					if winning_move(board, 2):
 						game_over = True #ai stuff
 						label = myfont.render("Player 2 wins!! Press any key to exit", 1, YELLOW)
-						#time.sleep(1)
 						screen.blit(label, (40,10))
 						winner = 2
 
-				if (mode == "auto_ai_vs_ai" or mode == "auto_random_vs_ai"):
+				elif (mode == "auto_ai_vs_ai" or mode == "auto_random_vs_ai"):
 
 					#make move
-					col=play_smart(board)
+					col=play_smart(board,AI2_DEPTH)
+					if col is None:
+						label = myfont.render("Tie!! Press any key to exit.", 1, RED)
+						screen.blit(label, (40,10))
+						break
+						Winner = 0
 					row=get_next_open_row(board, col)
 					drop_piece(board,row,col,2)
 
@@ -178,7 +187,21 @@ def play_game(mode):
 						game_over = True
 						label = myfont.render("Player 2 wins!! Press any key to exit.", 1, YELLOW)
 						screen.blit(label, (40,10))
+						winner = 2
+				elif (mode == "auto_ab_vs_ab" or mode == "auto_ai_vs_ab" or mode == "auto_random_vs_ab"):
+					col=play_genius(board, AI2_DEPTH)
+					if col is None:
+						label = myfont.render("Player 1 wins!! Press any key to exit.", 1, RED)
+						screen.blit(label, (40,10))
+						winner = 1
+						break
+					row=get_next_open_row(board, col)
+					drop_piece(board,row,col,2)
 
+					if winning_move(board,2):
+						to_game_over = True
+						label = myfont.render("Player 2 wins!! Press any key to exit.", 1, YELLOW)
+						screen.blit(label, (40,10))
 						winner = 2
 
 			#print_board(board)
@@ -191,7 +214,6 @@ def play_game(mode):
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					sys.exit()
-
 				if event.type == pygame.MOUSEMOTION:
 					pygame.draw.rect(screen, BLACK, (0,0, width, SQUARESIZE))
 					posx = event.pos[0]
@@ -206,7 +228,7 @@ def play_game(mode):
 					#print(event.pos)
 					# Ask for Player 1 Input
 					if turn == 0:
-						if (mode == "human_vs_random" or mode == "human_vs_ai") or mode == "minimax_ab":
+						if (mode == "human_vs_random" or mode == "human_vs_ai" or mode == "human_vs_ab") and not game_over:
 							posx = event.pos[0]
 							col = int(math.floor(posx/SQUARESIZE))
 
@@ -214,18 +236,17 @@ def play_game(mode):
 								row = get_next_open_row(board, col)
 								drop_piece(board, row, col, 1)
 
-						elif (mode == "random_vs_ai"):
+						elif (mode == "random_vs_ai" and not game_over):
 							col = play_random(COLUMN_COUNT)
 							if is_valid_location(board, col):
 								row = get_next_open_row(board, col)
 								drop_piece(board, row, col, 1)
 						else:
-							col=play_smart(board)
+							col=play_smart(board, AI1_DEPTH)
 							row=get_next_open_row(board, col)
 							drop_piece(board,row,col,1)
 
 						if winning_move(board, 1):
-							print('player 1 win')
 							label = myfont.render("Player 1 wins!! Press any key to exit", 1, RED)
 							#time.sleep(1)
 							screen.blit(label, (40,10))
@@ -252,7 +273,7 @@ def play_game(mode):
 
 							turn += 1
 							turn = turn % 2
-					if( not to_game_over):
+					if not to_game_over and not game_over:
 						if (mode == "human_vs_random" or mode == "ai_vs_random"):
 
 							col = play_random(COLUMN_COUNT)
@@ -267,9 +288,9 @@ def play_game(mode):
 								screen.blit(label, (40,10))
 								winner = 2
 
-						if (mode == "human_vs_ai" or mode == "ai_vs_ai" or mode == "random_vs_ai"):
+						if (mode == "human_vs_ai" or mode == "ai_vs_ai" or mode == "random_vs_ai") and not game_over:
 							#make move
-							col=play_smart(board)
+							col=play_smart(board, AI2_DEPTH)
 							print ("AI is choosing column " + str(col))
 							row=get_next_open_row(board, col)
 							drop_piece(board,row,col,2)
@@ -280,10 +301,10 @@ def play_game(mode):
 								label = myfont.render("Player 2 wins!! Press any key to exit.", 1, YELLOW)
 								screen.blit(label, (40,10))
 								winner = 2
-						if (mode == "minimax_ab"):
+						if (mode == "human_vs_ab") and not game_over:
 
 							#make move
-							col=play_genius(board)
+							col=play_genius(board, AI2_DEPTH)
 							if col is None:
 								label = myfont.render("Player 1 wins!! Press any key to exit.", 1, RED)
 								screen.blit(label, (40,10))
@@ -302,7 +323,6 @@ def play_game(mode):
 					draw_board(board, screen)
 
 					if to_game_over:
-						print("over")
 						waitExit = True
 						while(waitExit):
 							for event in pygame.event.get():

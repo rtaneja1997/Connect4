@@ -9,10 +9,10 @@ import copy
 from connect4 import *
 
 
-DEPTH=None #initialized by player 
+#DEPTH=None #initialized by player
 INFINITY=100000000000000
 
-#CLASSES 
+#CLASSES
 class MoveInfo(object):
 	"""Keeps track of a move and its minimax value"""
 	def __init__(self, score, move=None):
@@ -27,23 +27,23 @@ class MoveInfo(object):
 
 		return self.__str__()
 
-#FUNCTIONS FOR PLAYING 
+#FUNCTIONS FOR PLAYING
 def play_random(column):
 	"""Randomly chooses open column"""
 	col=random.randint(0, column-1)
 	return col
 
-def play_smart(board):
+def play_smart(board,depth):
 	"""uses minimax to play game """
-	best_move=minimax(board,1, DEPTH)
+	best_move=minimax(board,1, depth)
 	return best_move.move
 
-def play_genius(board): 
+def play_genius(board,depth):
 	"""uses alpha-beta version of minimax to play game """
-	
 
-	best_move=alphabeta(board, 1, DEPTH,-INFINITY,INFINITY)   
-	return best_move.move 
+
+	best_move=alphabeta(board, 1, depth,-INFINITY,INFINITY)
+	return best_move.move
 
 
 
@@ -95,7 +95,7 @@ def has_winning_diag(board, player):
 			if board[r][c] == player and board[r-1][c+1] == player and board[r-2][c+2] == player and board[r-3][c+3] == player:
 				return True
 
-	
+
 
 def four_consecutive(row, player):
 	"""Returns true if player has four consecutive pieces aligned, false otherwise """
@@ -119,14 +119,26 @@ def board_evaluation(board,possible_moves,turn):
 		if (row - 3 >=0):
 			if board[row-1][m] == board[row-2][m] == board[row-3][m]:
 				if (board[row-1][m] == 2):
-					eval += 0.03
+					if (turn == 1):
+						eval += 0.03
+					else:
+						eval -= 0.03
 				elif(board[row-1][m] == 1):
-					eval -= 0.03
+					if (turn == 1):
+						eval -= 0.03
+					else:
+						eval += 0.03
 			elif board[row-1][m] == board[row-1][m] :
 				if (board[row-1][m] == 2):
-					eval += 0.003
+					if (turn == 1):
+						eval += 0.003
+					else:
+						eval -= 0.003
 				elif(board[row-1][m] == 1):
-					eval -= 0.003
+					if (turn == 1):
+						eval -= 0.003
+					else:
+						eval += 0.003
 		elif (row - 2 >=0):
 			if board[row-1][m] == board[row-1][m] :
 				if (board[row-1][m] == 2):
@@ -135,8 +147,15 @@ def board_evaluation(board,possible_moves,turn):
 					eval -= 0.003
 		colStart = max(m-3,0)
 		colEnd = min(m, connect4.COLUMN_COUNT-4)
-		toThree = {2:1,1:-1,0:0}
-		toTwo = {2:4,1:-1,0:0}
+		toThree = {}
+		toTwo = {}
+		if (turn == 1):
+			toThree = {2:1,1:-1,0:0}
+			toTwo = {2:4,1:-1,0:0}
+		else:
+			toThree = {2:1,1:-1,0:0}
+			toTwo = {2:4,1:-1,0:0}
+
 		for i in range(colStart, colEnd+1):
 			count3 = toThree[board[row][i]]+toThree[board[row][i+1]]
 			+toThree[board[row][i+2]]+ toThree[board[row][i+3]]
@@ -217,12 +236,12 @@ def minimax(board, turn, depth):
 	    return MoveInfo(1)
 
     #Case 3: tie
-	elif possible_moves==[]: 
+	elif possible_moves==[]:
 		return MoveInfo(0)
 
 	elif depth==0:
 		return MoveInfo(board_evaluation(board, possible_moves, turn))
-	
+
 	move_information=[] #keeps track of minimax values for moves
 
 	for move in possible_moves:
@@ -256,6 +275,10 @@ def minimax(board, turn, depth):
 			if move_information[curr_idx].score>bestScore:
 				bestScore=move_information[curr_idx].score
 				best_idx=curr_idx
+			elif move_information[curr_idx].score==bestScore:
+				new_best = random.randint(0,1)
+				if (new_best == 1):
+					best_idx=curr_idx
 			curr_idx+=1
 		return move_information[best_idx]
 
@@ -269,15 +292,19 @@ def minimax(board, turn, depth):
 		if move_information[curr_idx].score<bestScore:
 			bestScore=move_information[curr_idx].score
 			best_idx=curr_idx
+		elif move_information[curr_idx].score==bestScore:
+			new_best = random.randint(0,1)
+			if (new_best == 1):
+				best_idx=curr_idx
 		curr_idx+=1
 	return move_information[best_idx]
 
 
 
-def alphabeta(board, turn, depth, a, b): 
+def alphabeta(board, turn, depth, a, b):
 
-	possible_moves=get_possible_moves(board) 
-	#terminal cases 
+	possible_moves=get_possible_moves(board)
+	#terminal cases
 	#Case 1: board is a winning state for human
 	if winning_board(board,1):
 		return MoveInfo(-1)
@@ -287,51 +314,47 @@ def alphabeta(board, turn, depth, a, b):
 	    return MoveInfo(1)
 
     #Case 3: tie
-	elif possible_moves==[] or depth==0: 
+	elif possible_moves==[] or depth==0:
 		return MoveInfo(board_evaluation(board, possible_moves, turn))
 
-	
 
-	if turn==1: 
 
-		ai_move=None 
-		value=-INFINITY 
-		for move in possible_moves: 
-			#create child board 
-			new_board=copy.deepcopy(board) 
-			row=connect4.get_next_open_row(new_board, move) 
-			connect4.drop_piece(new_board, row, move, 2) 
+	if turn==1:
 
-			#recurse 
+		ai_move=None
+		value=-INFINITY
+		for move in possible_moves:
+			#create child board
+			new_board=copy.deepcopy(board)
+			row=connect4.get_next_open_row(new_board, move)
+			connect4.drop_piece(new_board, row, move, 2)
+
+			#recurse
 			player=alphabeta(new_board, (turn+1)%2, depth-1,a,b)
-			if player.score>value: 
-				ai_move=move 
-				value=player.score 
-			
-			a=max(a,value) 
+			if player.score>value:
+				ai_move=move
+				value=player.score
+
+			a=max(a,value)
 			if a>=b:
-				break 
-		return MoveInfo(value, ai_move)  
+				break
+		return MoveInfo(value, ai_move)
 	else:
-		player_move=None 
-		value=INFINITY 
-		for move in possible_moves: 
-			#create child board 
-			new_board=copy.deepcopy(board) 
-			row=connect4.get_next_open_row(new_board, move) 
-			connect4.drop_piece(new_board, row, move, 1) 
+		player_move=None
+		value=INFINITY
+		for move in possible_moves:
+			#create child board
+			new_board=copy.deepcopy(board)
+			row=connect4.get_next_open_row(new_board, move)
+			connect4.drop_piece(new_board, row, move, 1)
 
-			#recurse 
-			ai=alphabeta(new_board, (turn+1)%2, depth-1, a, b) 
-			if ai.score<value: 
-				player_move=move 
-				value=ai.score 
-			
-			b=min(b,value) 
+			#recurse
+			ai=alphabeta(new_board, (turn+1)%2, depth-1, a, b)
+			if ai.score<value:
+				player_move=move
+				value=ai.score
+
+			b=min(b,value)
 			if a>=b:
-				break 
-		return MoveInfo(value, player_move) 
-
-
-
-
+				break
+		return MoveInfo(value, player_move)
