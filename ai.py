@@ -304,7 +304,8 @@ def minimax(board, turn, depth):
 def alphabeta(board, turn, depth, a, b):
 
 	possible_moves=get_possible_moves(board)
-	#terminal cases
+
+	#TERMINAL CASES 
 	#Case 1: board is a winning state for human
 	if winning_board(board,1):
 		return MoveInfo(-1)
@@ -315,46 +316,35 @@ def alphabeta(board, turn, depth, a, b):
 
     #Case 3: tie
 	elif possible_moves==[] or depth==0:
-		return MoveInfo(board_evaluation(board, possible_moves, turn))
+		return MoveInfo(board_evaluation(board, possible_moves, turn)) 
+
+
+	#search for move 
+	best_move=None 
+	value= -INFINITY if turn==1 else INFINITY 
+
+	for move in possible_moves: 
+		piece_type=turn+1 
+
+		new_board=copy.deepcopy(board) 
+		row=connect4.get_next_open_row(new_board,move) 
+		connect4.drop_piece(new_board,row,move,piece_type) 
+
+		child=alphabeta(new_board,(turn+1)%2, depth-1, a, b) 
+		if (child.score>value and turn==1) or (child.score<value and turn!=1):  
+			best_move=move 
+			value=child.score 
+
+		if turn==1: 
+			a=max(a,value) 
+
+		if turn!=1: 
+			b=min(b,value) 
+
+		if a>=b: 
+			break 
+	return MoveInfo(value, best_move)
 
 
 
-	if turn==1:
-
-		ai_move=None
-		value=-INFINITY
-		for move in possible_moves:
-			#create child board
-			new_board=copy.deepcopy(board)
-			row=connect4.get_next_open_row(new_board, move)
-			connect4.drop_piece(new_board, row, move, 2)
-
-			#recurse
-			player=alphabeta(new_board, (turn+1)%2, depth-1,a,b)
-			if player.score>value:
-				ai_move=move
-				value=player.score
-
-			a=max(a,value)
-			if a>=b:
-				break
-		return MoveInfo(value, ai_move)
-	else:
-		player_move=None
-		value=INFINITY
-		for move in possible_moves:
-			#create child board
-			new_board=copy.deepcopy(board)
-			row=connect4.get_next_open_row(new_board, move)
-			connect4.drop_piece(new_board, row, move, 1)
-
-			#recurse
-			ai=alphabeta(new_board, (turn+1)%2, depth-1, a, b)
-			if ai.score<value:
-				player_move=move
-				value=ai.score
-
-			b=min(b,value)
-			if a>=b:
-				break
-		return MoveInfo(value, player_move)
+	
