@@ -1,19 +1,13 @@
 # Connect4
-Created an ai for connect 4 utilizing minimax algorithm (with alpha-beta pruning). 
 
+Our team set out to incorporate various AI players into a pre-existing implementation of a Connect 4 game.
 
+The core components of our project consist of three modules:
 
+1. Connect4 Module: Got source code from https://github.com/KeithGalli/Connect4-Python, which ran a Connect4 game between two humans.
+We made changes to this code to allow for AI's to be involved in gameplay, as well as have various modes of gameplay occur.
 
-Done:
-- Implemented random player
-- Implemented minimax player 
-- Implemented alpha beta player 
-- Fixed bug where player wins but game crashes
+2. AI Module: We implemented three AI players that could play the Connect4 game. The first of which is an unintelligent player that chooses its moves randomly. The second is a smart player utilizing the minimax algorithm to make decisions. Finally, the best player utilizes minimax with alpha-beta pruning to find good moves in shorter time periods as well as function at higher 'intelligence' levels 
 
-To do: 
-- Noticed that the game allows someone to make an 'illegal move', i.e. if a player chooses a full column, the game skips his turn. It might be good if we fix this. (optional) 
-- debug alpha beta 
-- get ai's to vs each other 
-- incorporate more randomness when ai chooses moves with same value
-
+3. Main Module: Interface for the game. Allows a user to choose which game mode to play as well as how 'hard' AI's should be. 
 
