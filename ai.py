@@ -1,4 +1,12 @@
-#ai stuff
+"""AI Module with various implementations of AI players, including
+
+Random, unintelligent player 
+Smart player utilizing minimax algorithm
+Smarter player utilizing minimax with alpha-beta pruning
+
+This is the core module of our project, as our project aims to incorporate AI players into a pre-existing Connect4 game implementation
+"""
+
 import numpy as np
 import pygame
 import sys
