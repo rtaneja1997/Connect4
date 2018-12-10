@@ -1,3 +1,11 @@
+"""Module for data structures for game as well as creating GUI.
+Citation: We got this module from the github repo of https://github.com/KeithGalli/Connect4-Python/blob/master/connect4.py, a public 
+Connect4 game implementation
+
+We made changes to the source code to allow the game logic to account for multiple modes of gameplay as well as an AI player
+"""
+
+
 import numpy as np
 import pygame
 import sys
